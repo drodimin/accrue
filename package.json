@@ -1,0 +1,16 @@
+{
+  "name": "accrue",
+  "version": "0.0.1",
+  "description": "Spec-driven development framework",
+  "type": "module",
+  "packageManager": "bun@1.3.14",
+  "bin": {
+    "accrue": "./src/cli/bin.js"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "commander": "^15.0.0"
+  }
+}
