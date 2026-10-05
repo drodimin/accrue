@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
+import { configureRepos, normalizeRepoPath } from './setup-repos.js';
 
 // `require` is not defined in ESM; createRequire brings it back so this runs under Node.
 const require = createRequire(import.meta.url);
@@ -42,7 +43,7 @@ export const verifyAccrueFolder = () => {
     }
 }
 
-export const init = () => {
+export const init = async() => {
     try {
         verifyAccrueFolder();
     } catch (error) {
@@ -51,7 +52,12 @@ export const init = () => {
     }
     
     try {
-        getOrCreateConfig();
+        const config = await getOrCreateConfig();
+        const reposToAdd = await configureRepos([...new Set((config.repos ?? []).map(normalizeRepoPath))]);
+        config.repos = reposToAdd;
+
+        fs.writeFileSync(path.join(ACCRUE_FOLDER, CONFIG_FILENAME), JSON.stringify(config, null, 2));
+        console.log(`Config file created: ${path.join(ACCRUE_FOLDER, CONFIG_FILENAME)}`);
     } catch (error) {
         console.error('Error getting or creating config:', error);
         throw error;
